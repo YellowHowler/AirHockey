@@ -19,13 +19,7 @@ public class AIControl : MonoBehaviour
     Vector3 curPos;
     Vector3 speed;
 
-    internal float xspeed;
-    internal float yspeed;
-
-    float prevx;
-    float prevy;
-    float x;
-    float y;
+    bool firstTime = true;
 
     void Start()
     {
@@ -48,47 +42,27 @@ public class AIControl : MonoBehaviour
     void Update()
     {
         float movementSpeed;
+        float offSet = Random.Range(0.3f, 0.4f);
 
         if(puckObject.transform.position.x < 0f)
         {
-            movementSpeed = MaxMovementSpeed * Random.Range(0.1f, 0.3f);
+            firstTime = true;
+
+            movementSpeed = MaxMovementSpeed * Random.Range(0.7f, 1.0f);
+            targetPosition = new Vector2(Mathf.Clamp(puckObject.transform.position.x, -5.6f, -1f), puckObject.transform.position.y);
         }
         else
         {
+            if(firstTime)
+            {
+                firstTime = false;
+                offSet = Random.Range(-1f, 1f);
+            }
+
             movementSpeed = MaxMovementSpeed * Random.Range(0.1f, 0.3f);
-            
-            x = puckScript.curPos.x - 0.2f;
-            y = puckScript.curPos.y;
-            prevx = puckScript.prevPos.x - 0.2f;
-            prevy = puckScript.prevPos.y;
-
-            Debug.Log(x - prevx);
-
-            Debug.Log(((startingPosition.x - x) * (y - prevy))/(x - prevx) + y);
-            
-            if(x - prevx != 0)
-                targetPosition = new Vector2(startingPosition.x, ((startingPosition.x - x) * (y - prevy))/(x - prevx) + y);
-            else    
-                targetPosition = new Vector2(startingPosition.x, startingPosition.y);
+            targetPosition = new Vector2(startingPosition.x, puckObject.transform.position.y);
         }
 
-        rb.MovePosition(targetPosition);
-    }
-
-    IEnumerator calculateSpeed()
-    {
-        while(true)
-        {
-            prevPos = transform.position;
-            yield return Time.deltaTime;
-            curPos = transform.position;
-
-            speed = curPos - prevPos;
-            xspeed = speed.x;
-            yspeed = speed.y;
-
-            xspeed /= Time.deltaTime;
-            yspeed /= Time.deltaTime;
-        }
+        rb.MovePosition(Vector2.MoveTowards(rb.position, targetPosition, movementSpeed * Time.deltaTime));
     }
 }

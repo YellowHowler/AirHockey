@@ -11,10 +11,10 @@ public class pusherControl : MonoBehaviour
     Vector3 curPos;
     Camera camera;
 
-    float leftBound = 1.13f;
-    float rightBound = 7.65f;
-    float upperBound = 3.5f;
-    float lowerBound = -3.5f;
+    float leftBound = 1f;
+    float rightBound = 7.6f;
+    float upperBound = 3.4f;
+    float lowerBound = -3.4f;
 
     Vector3 speed;
 
